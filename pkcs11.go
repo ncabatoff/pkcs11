@@ -773,6 +773,7 @@ static inline CK_VOID_PTR getAttributePval(CK_ATTRIBUTE_PTR a)
 */
 import "C"
 import (
+	"fmt"
 	"strings"
 	"unsafe"
 )
@@ -1148,6 +1149,11 @@ func (c *Ctx) FindObjectsFinal(sh SessionHandle) error {
 
 // EncryptInit initializes an encryption operation.
 func (c *Ctx) EncryptInit(sh SessionHandle, m []*Mechanism, o ObjectHandle) error {
+	fmt.Printf("ncc #mechanisms: %d\n", len(m))
+	for _, mech := range m {
+		fmt.Printf("ncc CGO TRAP | Mech: %d | ParamLen: %d | Bytes: %x\n", mech.Mechanism,
+			len(mech.Parameter), mech.Parameter)
+	}
 	arena, mech := cMechanism(m)
 	defer arena.Free()
 	e := C.EncryptInit(c.ctx, C.CK_SESSION_HANDLE(sh), mech, C.CK_OBJECT_HANDLE(o))
